@@ -1,69 +1,115 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState } from "react";
+import StartScreen from "@/components/StartScreen";
+import WelcomeScreen from "@/components/WelcomeScreen";
+import DressUpScreen from "@/components/DressUpScreen";
+import ReflectionScreen from "@/components/ReflectionScreen";
+import ConfirmScreen from "@/components/ConfirmScreen";
+import CalendarScreen from "@/components/CalendarScreen";
+import InsightsScreen from "@/components/InsightsScreen";
+import { loadMemories, saveMemory } from "@/lib/memories";
+import "./screens.css";
 
 export default function Home() {
+  const [screen, setScreen] = useState("start");
+  const [outfit, setOutfit] = useState({});
+  // Read once on the client. Only the Welcome screen shows it, and that never renders on the server.
+  const [memories, setMemories] = useState(loadMemories);
+  const [viewing, setViewing] = useState(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+  const [backTo, setBackTo] = useState("welcome"); // where the Back arrow of Confirm goes
+  const [background, setBackground] = useState(null);
+  const [reflection, setReflection] = useState({
+    rating: 0,
+    keep: "",
+    leave: "",
+  });
+
+  if (screen === "start") {
+    return <StartScreen onContinue={() => setScreen("welcome")} />;
+  }
+  // Only Home and Calendar exist so far. The other tabs do nothing yet.
+  const goTab = (id) => {
+    if (id === "home") setScreen("welcome");
+    if (id === "calendar") setScreen("calendar");
+    if (id === "insights") setScreen("insights");
+  };
+  const openMemory = (m) => {
+    setBackTo(screen);
+    setViewing(m);
+    setJustSaved(false);
+    setScreen("confirm");
+  };
+
+  if (screen === "insights") {
+    return <InsightsScreen onNavigate={goTab} />;
+  }
+  if (screen === "calendar") {
+    return (
+      <CalendarScreen
+        memories={memories}
+        onOpenMemory={openMemory}
+        onNavigate={goTab}
+      />
+    );
+  }
+  if (screen === "welcome") {
+    return (
+      <WelcomeScreen
+        onDress={() => setScreen("dressup")}
+        memories={memories}
+        onOpenMemory={openMemory}
+        onNavigate={goTab}
+      />
+    );
+  }
+  if (screen === "reflection") {
+    return (
+      <ReflectionScreen
+        reflection={reflection}
+        setReflection={setReflection}
+        onBack={() => setScreen("dressup")}
+        saveFailed={saveFailed}
+        onCloseError={() => setSaveFailed(false)}
+        onSave={() => {
+          const result = saveMemory({ outfit, background, ...reflection });
+          if (!result.ok) {
+            // Stay on this page so nothing the user wrote is lost
+            setSaveFailed(true);
+            return;
+          }
+          setSaveFailed(false);
+          setJustSaved(true);
+          setBackTo("welcome");
+          setMemories(result.memories);
+          setViewing(result.memories[0]);
+          setOutfit({});
+          setBackground(null);
+          setReflection({ rating: 0, keep: "", leave: "" });
+          setScreen("confirm");
+        }}
+      />
+    );
+  }
+  if (screen === "confirm" && viewing) {
+    return (
+      <ConfirmScreen
+        memory={viewing}
+        justSaved={justSaved}
+        onBack={() => setScreen(backTo)}
+      />
+    );
+  }
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <DressUpScreen
+      outfit={outfit}
+      setOutfit={setOutfit}
+      background={background}
+      setBackground={setBackground}
+      onBack={() => setScreen("welcome")}
+      onReflect={() => setScreen("reflection")}
+    />
   );
 }
