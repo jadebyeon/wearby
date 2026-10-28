@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local test tooling (browser logs and snapshots)
+/.playwright-mcp/
+
+# large originals of the memory pictures. The web-sized copies (past-*.jpg, mem-*.png) are the ones used.
+/public/memories/제목_없는_아트워크*.png
