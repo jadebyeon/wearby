@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Character from "@/components/Character";
 import Confetti from "@/components/Confetti";
 import Star from "@/components/Star";
-import { ChevronLeft } from "@/components/GlassIcons";
+import { ChevronLeft, useGlassTone } from "@/components/GlassIcons";
 import { memoryLabel } from "@/lib/memories";
 
 // memory.background is a CSS image url (set later by the Dress Up background picker).
 export default function ConfirmScreen({ memory, justSaved, onBack }) {
+  const { surfaceRef, darkGlass } = useGlassTone(memory.background);
   const [showSaved, setShowSaved] = useState(Boolean(justSaved));
   useEffect(() => {
     if (!showSaved) return;
@@ -20,7 +21,7 @@ export default function ConfirmScreen({ memory, justSaved, onBack }) {
   const style = background ? { backgroundImage: `url("${background}")` } : undefined;
 
   return (
-    <main className="screen confirm" style={style}>
+    <main ref={surfaceRef} className={`screen confirm${darkGlass ? " dark-glass" : ""}`} style={style}>
       <header className="confirm-top">
         <button type="button" className="glass-btn" onClick={onBack} aria-label="Back">
           <ChevronLeft />
@@ -38,6 +39,10 @@ export default function ConfirmScreen({ memory, justSaved, onBack }) {
         </p>
       )}
 
+      {memory.image && !outfit ? (
+        <img className="past-memory-detail" src={memory.image} alt={`Memory from ${memoryLabel(savedAt)}, ${rating} stars`} />
+      ) : (
+      <>
       <div className="confirm-stage">
         <Character outfit={outfit} />
       </div>
@@ -53,9 +58,12 @@ export default function ConfirmScreen({ memory, justSaved, onBack }) {
             ))}
           </span>
         </p>
-        {keep && <p className="confirm-row confirm-text">{keep}</p>}
-        {leave && <p className="confirm-row confirm-text">{leave}</p>}
+        {(keep || memory.isSample) && <p className="confirm-row confirm-text">{keep || "\u00a0"}</p>}
+        {(leave || memory.isSample) && <p className="confirm-row confirm-text">{leave || "\u00a0"}</p>}
+        {memory.surprise && <p className="confirm-row confirm-text">{memory.surprise}</p>}
       </section>
+      </>
+      )}
     </main>
   );
 }

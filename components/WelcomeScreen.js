@@ -1,9 +1,18 @@
+import { useState } from "react";
+import { pastMemories } from "@/data/pastMemories";
 import Icon from "@/components/Icon";
 import NavBar from "@/components/NavBar";
 import Character from "@/components/Character";
 import { memoryLabel } from "@/lib/memories";
 
-export default function WelcomeScreen({ onDress, memories = [], onOpenMemory, onNavigate }) {
+export default function WelcomeScreen({ onDress, drafts = [], onOpenDraft, memories = [], onOpenMemory, onNavigate, onSeeMore }) {
+  const [samples] = useState(pastMemories);
+  const savedDays = new Set(memories.map((memory) => new Date(memory.savedAt).toDateString()));
+  const recentMemories = [
+    ...memories,
+    ...samples.filter((memory) => !savedDays.has(new Date(memory.savedAt).toDateString())),
+  ].sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+
   return (
     <main className="screen welcome">
       <header className="welcome-header">
@@ -23,18 +32,21 @@ export default function WelcomeScreen({ onDress, memories = [], onOpenMemory, on
         </span>
       </button>
 
-      <section className="badge-card" aria-label="Badge progress">
-        <p className="text-body">4 more outfits for a badge!</p>
-        <div className="dots" aria-hidden="true">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <span key={i} className={i < 3 ? "dot on" : "dot"} />
-          ))}
+      <section className="badge-card draft-card" aria-label="Saved drafts">
+        <p className="text-body">You have {drafts.length} clothes saved</p>
+        <div className="draft-previews">
+          {drafts.map((draft, index) => <button type="button" key={draft.id} className="draft-preview" aria-label={`Edit saved outfit ${index + 1}`} onClick={() => onOpenDraft(draft)} style={draft.background ? { backgroundImage: `url("${draft.background}")` } : undefined}>
+            <Character outfit={draft.outfit} />
+          </button>)}
         </div>
       </section>
 
       <section className="memories">
-        <h2 className="text-h3">Recent Memories</h2>
-        {memories.length === 0 ? (
+        <div className="memories-heading">
+          <h2 className="text-h3">Recent Memories</h2>
+          <button type="button" className="text-body memories-more" onClick={onSeeMore}>See more</button>
+        </div>
+        {recentMemories.length === 0 ? (
           <div className="memory-empty-row">
             <button type="button" className="memory-empty" onClick={onDress}>
               <span className="memory-empty-box">
@@ -51,7 +63,7 @@ export default function WelcomeScreen({ onDress, memories = [], onOpenMemory, on
           </div>
         ) : (
           <ul className="memory-list" tabIndex={0} aria-label="Recent memories, scroll sideways">
-            {memories.map((m) => {
+            {recentMemories.map((m) => {
               const label = memoryLabel(m.savedAt);
               return (
                 <li key={m.id}>
@@ -61,8 +73,8 @@ export default function WelcomeScreen({ onDress, memories = [], onOpenMemory, on
                     onClick={() => onOpenMemory(m)}
                     aria-label={`Open memory from ${label}`}
                   >
-                    <span className="memory-thumb">
-                      <Character outfit={m.outfit} />
+                    <span className="memory-thumb" style={m.background ? { backgroundImage: `url("${m.background}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
+                      {m.image && !m.outfit ? <img className="memory-photo" src={m.image} alt="" /> : <Character outfit={m.outfit} />}
                     </span>
                     <span className="text-small">{label}</span>
                   </button>

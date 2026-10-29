@@ -32,10 +32,10 @@ export default function ReflectionScreen({
           <ChevronLeft />
           <span className="btn-label">Back</span>
         </button>
-        <button type="button" className="glass-pill" onClick={onSave}>
-          <Check size={22} />
-          <span className="text-body">Save</span>
-        </button>
+          <button type="button" className="glass-btn reflection-next" onClick={onSave} aria-label="Next">
+            <Check />
+            <span className="btn-label">Next</span>
+          </button>
       </header>
 
       <div className="reflection-body">

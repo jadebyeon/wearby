@@ -3,7 +3,7 @@ import { NAV_ICONS } from "@/data/navIcons";
 
 export default function NavIcon({ name, active }) {
   const data = NAV_ICONS[name];
-  const size = active ? 40 : 28;
+  const size = active ? 32 : 28;
 
   if (!data || data.paths.length === 0) {
     return <Icon name={name} size={size} />;

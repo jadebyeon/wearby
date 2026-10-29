@@ -20,10 +20,11 @@ export default function NavBar({ active, onNavigate }) {
             aria-current={isActive ? "page" : undefined}
             onClick={() => onNavigate?.(item.id)}
           >
-            <span className="nav-icon-box">
+            {isActive && <span className="nav-active-disc" aria-hidden="true" />}
+            <span className="nav-icon-box" style={{ viewTransitionName: `nav-icon-${item.id}` }}>
               <NavIcon name={item.icon} active={isActive} />
             </span>
-            <span className="text-small nav-label">{item.label}</span>
+            <span className="text-small nav-label" style={{ viewTransitionName: `nav-label-${item.id}` }}>{item.label}</span>
           </button>
         );
       })}

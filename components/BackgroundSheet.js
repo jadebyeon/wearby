@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Icon from "@/components/Icon";
+import { Camera, Picture } from "@/components/GlassIcons";
 import { BACKGROUNDS } from "@/data/backgrounds";
 import { photoToBackground } from "@/lib/image";
 
@@ -48,15 +49,7 @@ export default function BackgroundSheet({ current, onPick, onClose }) {
             <ul className="action-list">
               <li>
                 <label className="action-row">
-                  <svg viewBox="0 0 28 28" width="28" height="28" fill="none" aria-hidden="true">
-                    <path
-                      d="M4.5 9.5a2 2 0 0 1 2-2h2.7l1.6-2.3h6.4l1.6 2.3h2.7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2v-11Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="14" cy="15" r="4" stroke="currentColor" strokeWidth="2" />
-                  </svg>
+                  <Camera size={28} />
                   <span className="text-body">Take a photo</span>
                   <input
                     ref={firstRef}
@@ -70,7 +63,7 @@ export default function BackgroundSheet({ current, onPick, onClose }) {
               </li>
               <li>
                 <label className="action-row">
-                  <Icon name="Image" size={28} />
+                  <Picture size={28} />
                   <span className="text-body">Choose from gallery</span>
                   <input
                     type="file"
@@ -82,7 +75,7 @@ export default function BackgroundSheet({ current, onPick, onClose }) {
               </li>
               <li>
                 <button type="button" className="action-row" onClick={() => setView("defaults")}>
-                  <Icon name="Image" size={28} />
+                  <Picture size={28} />
                   <span className="text-body">Default backgrounds</span>
                 </button>
               </li>

@@ -112,16 +112,19 @@ export default function CalendarScreen({ memories, onNavigate }) {
                 : `${savedThisMonth} outfit${savedThisMonth > 1 ? "s" : ""} saved this month`}
             </p>
           </div>
-          <button
-            type="button"
-            className="cal-today"
-            onClick={() => {
-              setView({ y: today.getFullYear(), m: today.getMonth() });
-              setSelected(null);
-            }}
-          >
-            Today
-          </button>
+          <details className="annual-year-picker" onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+          }} onKeyDown={(event) => {
+            if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary").focus(); }
+          }}>
+            <summary className="cal-today" aria-label={`Year, ${view.y}`}>{view.y}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+            <div className="annual-year-options" role="group" aria-label="Choose year">
+              {[...new Set([view.y, today.getFullYear(), today.getFullYear() - 1, ...memories.map((m) => new Date(m.savedAt).getFullYear())])].sort((a, b) => b - a).map((year) => <button type="button" className="text-body" key={year} aria-pressed={view.y === year} onClick={(event) => {
+                setView((prev) => ({ ...prev, y: year })); setSelected(null);
+                const picker = event.currentTarget.closest("details"); picker.open = false; picker.querySelector("summary").focus();
+              }}>{year}</button>)}
+            </div>
+          </details>
         </header>
 
         <div className="cal-grid cal-week" aria-hidden="true">
@@ -202,7 +205,7 @@ export default function CalendarScreen({ memories, onNavigate }) {
 
         {selected && (
           <section className="cal-detail" aria-label="Saved outfit">
-            {selected.image ? (
+            {selected.image && !selected.outfit ? (
               <img
                 className="cal-photo"
                 src={selected.image}

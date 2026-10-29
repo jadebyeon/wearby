@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Bookmark, Picture, Check } from "@/components/GlassIcons";
+import { flushSync } from "react-dom";
+import { ChevronLeft, Bookmark, Picture, Check, useGlassTone } from "@/components/GlassIcons";
 import Character from "@/components/Character";
 import BackgroundSheet from "@/components/BackgroundSheet";
 import { TABS, ITEMS } from "@/data/clothes";
@@ -27,7 +28,13 @@ export default function DressUpScreen({
   setBackground,
   onBack,
   onReflect,
+  onSaveDraft,
+  draftError,
+  hasUnsavedChanges,
+  draftSaved,
 }) {
+  const { surfaceRef, darkGlass } = useGlassTone(background);
+  const leaveDialog = useRef(null);
   const [tab, setTab] = useState("top");
   const [pickingBackground, setPickingBackground] = useState(false);
   const items = ITEMS.filter((i) => i.tab === tab);
@@ -122,17 +129,26 @@ export default function DressUpScreen({
     };
   }, []);
 
-  // The chosen tab slides to the middle of the row, like Memoji. Instant, no animation.
+  // Center the selected category with a short native scroll.
   useEffect(() => {
     const row = tabsRef.current;
     const btn = row?.querySelector('[aria-selected="true"]');
     if (!btn) return;
-    row.scrollLeft = btn.offsetLeft - (row.clientWidth - btn.offsetWidth) / 2;
+    row.scrollTo({ left: btn.offsetLeft - (row.clientWidth - btn.offsetWidth) / 2, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }, [tab]);
 
   function chooseTab(id) {
-    setTab(id);
-    if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
+    if (id === tab) return;
+    const direction = TABS.findIndex((t) => t.id === id) > TABS.findIndex((t) => t.id === tab) ? 1 : -1;
+    flushSync(() => setTab(id));
+    const list = scrollerRef.current;
+    if (list) {
+      list.scrollTop = 0;
+      list.getAnimations().forEach((animation) => animation.cancel());
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        list.animate([{ opacity: .35, transform: `translateX(${direction * 10}px)` }, { opacity: 1, transform: "translateX(0)" }], { duration: 200, easing: "ease-out" });
+      }
+    }
   }
 
   const shrink = off === null ? 0 : spacer === 0 ? 1 : 1 - off / spacer;
@@ -150,26 +166,28 @@ export default function DressUpScreen({
 
   return (
     <main
-      className="screen dressup"
+      ref={surfaceRef}
+      className={`screen dressup${darkGlass ? " dark-glass" : ""}`}
       style={{
         "--k": 1 - shrink * (1 - minScale),
         ...(background ? { backgroundImage: `url("${background}")` } : null),
       }}
     >
+      {draftError && <p className="text-body draft-error" role="alert">Could not update saved outfits. Please try again.</p>}
       <header className="dressup-bar">
         <button
           type="button"
           className="glass-btn"
-          onClick={onBack}
+          onClick={() => hasUnsavedChanges ? leaveDialog.current.showModal() : onBack()}
           aria-label="Back"
         >
           <ChevronLeft />
           <span className="btn-label">Back</span>
         </button>
         <div className="glass-group">
-          <button type="button" className="group-btn" aria-label="Save">
+          <button type="button" className={`group-btn${draftSaved ? " draft-saved" : ""}`} aria-label={draftSaved ? "Saved!" : "Save"} aria-pressed={draftSaved} onClick={onSaveDraft}>
             <Bookmark />
-            <span className="btn-label">Save</span>
+            <span className="btn-label" aria-live="polite">{draftSaved ? "Saved!" : "Save"}</span>
           </button>
           <button
             type="button"
@@ -184,11 +202,11 @@ export default function DressUpScreen({
           <button
             type="button"
             className="group-btn"
-            aria-label="Reflect"
+            aria-label="Next"
             onClick={onReflect}
           >
             <Check />
-            <span className="btn-label">Reflect</span>
+            <span className="btn-label">Next</span>
           </button>
         </div>
       </header>
@@ -229,6 +247,15 @@ export default function DressUpScreen({
           </div>
         </div>
       </section>
+      <dialog ref={leaveDialog} className="leave-draft-dialog" aria-labelledby="leave-draft-title" aria-describedby="leave-draft-description">
+        <img className="leave-draft-face" src="/character/faces/face-sad.svg" alt="" />
+        <h2 id="leave-draft-title" className="text-body">Leave without saving?</h2>
+        <p id="leave-draft-description" className="text-body">Your changes won’t be saved.</p>
+        <div className="leave-draft-actions">
+          <button type="button" className="profile-button text-body" autoFocus onClick={() => leaveDialog.current.close()}>Cancel</button>
+          <button type="button" className="profile-button text-body" onClick={onBack}>Continue</button>
+        </div>
+      </dialog>
       {pickingBackground && (
         <BackgroundSheet
           current={background}
