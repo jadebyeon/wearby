@@ -11,28 +11,28 @@ const base = {
   strokeLinejoin: "round",
 };
 
-function Svg({ size = 24, children }) {
+function Svg({ size = 24, viewBox = "0 0 24 24", children }) {
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" {...base}>
+    <svg viewBox={viewBox} width={size} height={size} aria-hidden="true" {...base}>
       {children}
     </svg>
   );
 }
 
 export const ChevronLeft = (p) => (
-  <Svg {...p}>
+  <Svg viewBox="3 3.75 16.5 16.5" {...p}>
     <path d="M15 19.5L7.5 12L15 4.5" />
   </Svg>
 );
 
 export const Bookmark = (p) => (
-  <Svg {...p}>
+  <Svg viewBox="3.5 3.75 17 17" {...p}>
     <path d="M7 4.5h10A1.5 1.5 0 0 1 18.5 6v14L12 16l-6.5 4V6A1.5 1.5 0 0 1 7 4.5Z" />
   </Svg>
 );
 
 export const Picture = (p) => (
-  <Svg {...p}>
+  <Svg viewBox="3.25 3.25 17.5 17.5" {...p}>
     <rect x="4" y="4" width="16" height="16" rx="3" />
     <circle cx="9" cy="9.5" r="1.5" />
     <path d="M4.5 17l4.5-4.5 3.5 3.5 2.5-2.5 4.5 4.5" />
@@ -40,7 +40,7 @@ export const Picture = (p) => (
 );
 
 export const Check = (p) => (
-  <Svg {...p}>
+  <Svg viewBox="4.75 4.75 14.5 14.5" {...p}>
     <path d="M5.5 12.5l4.5 4.5L18.5 7" />
   </Svg>
 );

@@ -65,7 +65,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 6.6dvh;
+  margin-bottom: 4.6dvh;
 }
 .welcome-title {
   margin: 0;
@@ -107,7 +107,7 @@
   color: var(--secondary-green);
 }
 .badge-card {
-  margin-top: 5.75dvh;
+  margin-top: 4dvh;
   padding: 14px var(--card-inset) 12px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 18px;
@@ -1651,7 +1651,7 @@ button.cal-day {
 .past-thumb .character { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: auto; height: 90%; aspect-ratio: 114 / 368; }
 .past-stars { display: flex; flex-direction: column; flex: 0 0 14px; padding-top: 20px; }
 .past-stars > span { display: block; width: 14px; height: 14px; }
-.past-date { align-self: center; margin-top: 6px; }
+.past-date { align-self: flex-start; text-align: left; margin-top: 6px; }
 .past-memories .navbar { margin: 0; }
 .past-card:focus-visible,
 .past-sort select:focus-visible { outline: 2px solid var(--neutral-navy); outline-offset: 3px; }
@@ -1743,8 +1743,8 @@ button.cal-day {
 .annual-year-picker summary { list-style: none; display: flex; align-items: center; justify-content: center; gap: 4px; width: 77px; height: 37px; padding: 10px 12px; }
 .annual-year-picker summary::-webkit-details-marker { display: none; }
 .annual-year-picker summary:focus-visible, .annual-year-options button:focus-visible { outline: 2px solid var(--text-muted); outline-offset: 2px; }
-.annual-year-options { position: absolute; right: 0; top: calc(100% + 6px); min-width: 100%; padding: 4px; border-radius: 16px; background: #fcfaf6; box-shadow: 0 4px 14px rgba(45,45,45,.07); }
-.annual-year-options button { display: block; width: 100%; min-height: 44px; padding: 8px 14px; border: 0; border-radius: 12px; background: transparent; color: var(--text-muted); cursor: pointer; }
+.annual-year-options { position: absolute; right: 0; top: calc(100% + 6px); min-width: 100%; padding: 3px; border-radius: 14px; background: #fcfaf6; box-shadow: 0 4px 14px rgba(45,45,45,.07); }
+.annual-year-options button { display: block; width: 100%; min-height: 34px; padding: 6px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--text-muted); cursor: pointer; }
 .annual-year-options button[aria-pressed="true"] { background: var(--secondary-cream); color: var(--secondary-green); }
 .annual-card h2 { color: var(--text-muted); }
 .annual-ratings { flex: 0 1 168px; margin-left: auto; }
@@ -1800,10 +1800,10 @@ button.cal-day {
 .feature-notice-ear { display: grid; }
 .feature-notice-ear img { grid-area: 1 / 1; width: 100%; height: auto; }
 .notice-wink { opacity: 0; }
-.feature-notice[open] .notice-surprised { animation: notice-surprise .45s ease-in-out forwards; }
-.feature-notice[open] .notice-wink { animation: notice-wink .45s ease-in-out forwards; }
-@keyframes notice-surprise { 0%, 40% { opacity: 1; } 75%, 100% { opacity: 0; } }
-@keyframes notice-wink { 0%, 40% { opacity: 0; } 75%, 100% { opacity: 1; } }
+.feature-notice[open] .notice-surprised { animation: notice-surprise .65s cubic-bezier(.4, 0, .2, 1) forwards; }
+.feature-notice[open] .notice-wink { animation: notice-wink .65s cubic-bezier(.4, 0, .2, 1) forwards; }
+@keyframes notice-surprise { 0%, 25% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes notice-wink { 0%, 25% { opacity: 0; } 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .feature-notice[open] .notice-surprised, .feature-notice[open] .notice-wink { animation: none; }
 }
@@ -1820,7 +1820,7 @@ button.cal-day {
 /* Short oval controls, with a 44px minimum touch target. */
 .glass-btn { height: 46px; border-radius: 999px; }
 .group-btn { height: 42px; min-height: 44px; }
-.glass-btn svg, .group-btn svg { width: 22px; height: 22px; }
+.glass-btn svg, .group-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
 .glass-btn, .glass-group, .glass-pill, .profile-button {
   background: linear-gradient(160deg, rgba(250,247,241,.38), rgba(228,219,204,.28));
   color: var(--text-muted);
@@ -1839,28 +1839,6 @@ button.cal-day {
 
 .glass-group .group-btn[aria-label="Change background"] { width: 88px; flex-shrink: 0; }
 
-.annual-year-picker:not(.past-sort-picker) .annual-year-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-}
-.annual-year-picker:not(.past-sort-picker) .annual-year-options button {
-  width: 77px;
-  height: 37px;
-  min-height: 37px;
-  padding: 10px 12px;
-  border-radius: 999px;
-  background: var(--secondary-cream);
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: normal;
-}
 
 .navbar { view-transition-name: main-navigation; }
 .nav-active-disc { view-transition-name: navigation-selection; }
@@ -1886,7 +1864,7 @@ button.cal-day {
 }
 
 /* Draft save feedback and leave confirmation. */
-.dressup .group-btn.draft-saved { color: var(--green, #356230); }
+.dressup .group-btn.draft-saved { color: inherit; }
 .dressup .group-btn.draft-saved svg { stroke-width: 2.5; }
 .leave-draft-dialog {
   margin: auto;
@@ -1907,3 +1885,206 @@ button.cal-day {
 .leave-draft-actions .profile-button { flex: 1; }
 .leave-draft-actions .profile-button:first-child { background: #a9b3a1; color: #0e0c2e; }
 .leave-draft-actions .profile-button:last-child { background: rgba(242,196,155,.32); }
+
+/* AI tee creation reuses the existing type and button styles. */
+.ai-create-item { flex-direction: column; gap: 4px; color: var(--text-muted); }
+.ai-create-item span { font-size: 24px; }
+.ai-shirt-dialog { margin: auto; width: min(360px, calc(100% - 32px)); max-height: 90dvh; overflow-y: auto; padding: 20px 16px; border: 1px solid rgba(250,247,241,.28); border-radius: 24px; background: #f5f0e8; color: var(--text-muted); }
+.ai-shirt-dialog::backdrop { background: rgba(14,12,46,.25); }
+.ai-shirt-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ai-shirt-header h2 { margin: 0; color: #356230; }
+.ai-shirt-field { display: block; margin: 16px 0 4px; }
+.ai-shirt-field input { display: block; max-width: 100%; margin-top: 8px; min-height: 44px; font: inherit; font-size: 12px; }
+.ai-shirt-dialog textarea { width: 100%; padding: 12px; border: 1px solid #a9b3a1; border-radius: 16px; background: rgba(252,250,246,.82); color: var(--text-muted); resize: vertical; }
+.ai-shirt-dialog .ai-shirt-primary { background: #a9b3a1; color: #0e0c2e; }
+.ai-shirt-dialog button:disabled { opacity: .5; cursor: default; }
+.ai-shirt-photo { display: flex; align-items: center; gap: 8px; }
+.ai-shirt-photo img { width: 64px; height: 64px; object-fit: contain; }
+.ai-shirt-actions { display: flex; gap: 8px; }
+.ai-shirt-actions button { flex: 1; }
+.ai-shirt-preview { display: flex; justify-content: center; margin: 16px 0; }
+.ai-shirt-preview .character { width: auto; height: min(36dvh, 300px); aspect-ratio: 114 / 368; }
+
+.ai-template-row { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+.ai-template-row img { width: 48px; height: 48px; object-fit: contain; }
+.ai-template-row select { min-width: 0; flex: 1; max-width: 100%; }
+
+/* Both touch axes are handled separately by Dress Up's gesture handler. */
+.dressup .sheet { touch-action: pan-x pan-y; }
+
+/* Brief feedback for navigation, dialogs and clothing changes. */
+@keyframes wearby-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wearby-popup { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@keyframes wearby-saved { 0% { scale: .85; } 65% { scale: 1.08; } 100% { scale: 1; } }
+@keyframes wearby-blink { 0%, 43%, 51%, 100% { opacity: 0; } 46%, 48% { opacity: 1; } }
+.ai-making-face { display: grid; width: 40px; margin: 12px auto 0; }
+.ai-making-face img { grid-area: 1 / 1; width: 100%; }
+.ai-making-blink { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open], .action-sheet, .notice { animation: wearby-popup 170ms ease-out; }
+  dialog[open]::backdrop, .sheet-backdrop, .notice-backdrop { animation: wearby-fade 170ms ease-out; }
+  .dressup .stage .character-item { animation: wearby-fade 140ms ease-out; }
+  .draft-saved svg { animation: wearby-saved 200ms ease-out; }
+  .ai-making-blink { animation: wearby-blink 2.4s linear infinite; }
+  .welcome, .calendar, .insights, .profile, .past-memories { animation: wearby-fade 180ms ease-out; }
+}
+
+/* Balance the icon/label stack inside each oval. */
+.glass-group { padding: 4px; }
+.glass-btn, .group-btn { gap: 4px; }
+.glass-btn .btn-label, .group-btn .btn-label { line-height: 14px; }
+.glass-btn > svg, .group-btn > svg,
+.glass-btn > .btn-label, .group-btn > .btn-label { translate: 0 -1px; }
+.welcome .memories { margin-bottom: 24px; }
+.welcome > .dress-card, .welcome > .badge-card, .welcome > .memories { flex-shrink: 0; }
+/* Keep Home within the same viewport as the other navigation screens. */
+.welcome { height: 100dvh; min-height: 0; overflow: hidden; }
+.welcome > .dress-card { flex-shrink: 1; min-height: 120px; }
+.welcome > .navbar { margin-top: auto; }
+@media (max-height: 740px) {
+  .welcome { padding-top: calc(env(safe-area-inset-top) + 16px); }
+  .welcome-header { margin-bottom: 2dvh; }
+  .welcome .badge-card { margin-top: 2dvh; }
+  .welcome .draft-card { padding-top: 12px; padding-bottom: 12px; }
+  .welcome .memories { margin-top: 2dvh; margin-bottom: 16px; }
+}
+@media (max-height: 620px) {
+  .welcome .dress-card { height: 120px; padding-top: 12px; padding-bottom: 12px; }
+  .welcome .memory-thumb { height: 72px; }
+  .welcome .draft-preview { height: 44px; }
+  .welcome .draft-preview .character { height: 40px; }
+}
+
+/* Compact AI dialog with distinct input, progress and preview states. */
+.ai-shirt-header h2 { color: var(--neutral-navy); }
+.ai-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--text-muted); cursor: pointer; }
+.ai-close:focus-visible { outline: 2px solid var(--text-muted); outline-offset: -6px; border-radius: 12px; }
+.ai-state > p { margin: 8px 0 16px; }
+.ai-shirt-dialog textarea { line-height: 1.5; }
+.ai-shirt-dialog .ai-shirt-primary { min-height: 44px; }
+.ai-progress-state { padding-top: 8px; }
+.ai-progress { height: 6px; width: 100%; overflow: hidden; border-radius: 999px; background: rgba(169,179,161,.3); }
+.ai-progress > span { display: block; height: 100%; background: #356230; border-radius: inherit; }
+@media (prefers-reduced-motion: no-preference) {
+  .ai-state { animation: wearby-popup 200ms ease-out; }
+  .ai-progress > span { transition: width 500ms linear; }
+}
+
+/* Picker options use the same typography as the selected value. */
+.annual-year-picker summary, .annual-year-picker .annual-year-options button { font-family: var(--font-body); font-size: 14px; font-weight: 500; line-height: normal; }
+
+.past-header p { color: var(--secondary-green); opacity: .8; }
+.ai-shirt-dialog { padding: 20px 24px 24px; }
+.ai-shirt-header h2 { line-height: 1.2; }
+.ai-shirt-header { gap: 4px; }
+.ai-shirt-header .ai-close { margin-right: -10px; }
+.ai-state > p:first-child { margin: 4px 0 24px; }
+.ai-shirt-dialog .ai-shirt-field { color: var(--neutral-navy); margin: 20px 0 8px; }
+.ai-shirt-dialog textarea { display: block; color: var(--neutral-navy); border-color: rgba(111,109,122,.3); background: rgba(252,250,246,.82); }
+.ai-shirt-dialog textarea::placeholder { color: var(--text-muted); opacity: .8; }
+.ai-shirt-dialog .ai-shirt-primary { width: 100%; margin-top: 24px; background: #356230; color: #fff; }
+.ai-shirt-actions .ai-shirt-primary { margin-top: 0; }
+.ai-state .ai-disclosure { margin: 12px 0 0; text-align: center; }
+
+.ai-error-state > img { display: block; width: 88px; height: 96px; object-fit: contain; margin: 24px auto 20px; }
+.ai-error-state > p { text-align: center; margin: 0 0 24px; }
+
+.ai-shirt-dialog .profile-button { min-height: 44px; padding: 8px 14px; border-radius: 24px; font-size: 14px; line-height: 1.4; }
+.ai-shirt-actions .profile-button { flex: 1 1 0; width: auto; min-width: 0; }
+
+/* Hold a memory to lift it above the collection. */
+.past-card { -webkit-touch-callout: none; user-select: none; touch-action: pan-y; }
+.past-card img { -webkit-user-drag: none; }
+.memory-preview {
+  padding: 16px; border: 0; background: transparent; color: var(--text-muted);
+  width: min(300px, calc(100vw - 40px)); max-height: 90dvh; overflow-y: auto;
+}
+.memory-preview::backdrop {
+  background: rgba(35, 32, 28, .16);
+  backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+}
+.memory-preview-content { display: flex; flex-direction: column; gap: 26px; }
+.memory-preview-actions {
+  border-radius: 20px; overflow: hidden; background: rgba(252, 250, 246, .92);
+  box-shadow: 0 8px 30px rgba(45,45,45,.1);
+}
+.memory-preview-actions button {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+  min-height: 48px; padding: 12px 18px; border: 0; background: transparent; color: inherit; cursor: pointer;
+}
+.memory-preview-actions button + button { border-top: 1px solid rgba(111,109,122,.16); }
+.memory-preview-actions button:hover { background: rgba(158,137,108,.12); }
+.memory-preview .past-card { padding: 0 12px 16px; cursor: default; background: #fcfaf6; }
+.memory-preview .past-thumb { max-height: 48dvh; }
+.memory-preview .past-stars { padding-top: 22px; }
+@media (prefers-reduced-motion: no-preference) {
+  .memory-preview[open] { animation: wearby-popup 180ms ease-out; }
+}
+.past-memories:has(.memory-preview[open]) > .past-surface { filter: blur(7px); }
+
+/* Compact context menu proportions follow the reference, in Wearby's palette. */
+.memory-preview {
+  width: min(240px, calc(100vw - 48px)); padding: 0; border-radius: 0;
+  margin: auto;
+  max-height: calc(100dvh - 64px);
+}
+.memory-preview-content { gap: 8px; }
+.memory-preview-actions { border-radius: 16px; background: rgba(252,250,246,.88); }
+.memory-preview-actions button { min-height: 38px; padding: 7px 16px; font-size: 14px; font-weight: 400; line-height: 24px; }
+.memory-preview-actions button.memory-delete { color: #d44037; }
+.memory-preview-actions p { margin: 10px 16px; }
+.memory-preview .past-card { border-radius: 16px; padding: 12px; cursor: pointer; }
+.memory-preview .past-card-top { margin-top: 0; }
+.memory-preview .past-thumb { max-height: 34dvh; }
+.memory-preview .past-date { margin-top: 8px; }
+
+/* Dropdowns share the memory context panel's compact treatment. */
+.annual-year-options {
+  padding: 0; overflow: hidden; border-radius: 16px;
+  background: rgba(252,250,246,.88);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px rgba(45,45,45,.1);
+}
+.annual-year-picker .annual-year-options button {
+  min-height: 38px; padding: 7px 16px; border-radius: 0;
+  font-size: 14px; font-weight: 400; line-height: 24px; white-space: nowrap;
+}
+.annual-year-options button + button { border-top: 1px solid rgba(111,109,122,.16); }
+.annual-year-options button[aria-pressed="true"] { background: rgba(158,137,108,.08); }
+.annual-year-options button:hover { background: rgba(158,137,108,.12); }
+
+/* Reference toolbar: balanced inset, then icon, breathing room, and label. */
+.glass-group { padding: 5px; }
+.glass-btn { height: 54px; }
+.group-btn { height: 44px; min-height: 44px; }
+.glass-btn, .group-btn { gap: 6px; }
+.glass-btn svg, .group-btn svg { width: 18px; height: 18px; }
+.glass-btn .btn-label, .group-btn .btn-label { line-height: 14px; }
+.glass-btn > svg, .group-btn > svg,
+.glass-btn > .btn-label, .group-btn > .btn-label { translate: none; }
+.confirm-row, .confirm-text {
+  font-family: var(--font-body); font-size: 14px; font-weight: 400; line-height: 1.5;
+}
+
+/* Shared typography across navigation, pickers, and memories. */
+.cal-num, .memories-more { font-family: var(--font-body); font-size: 12px; font-weight: 500; }
+.tab { font-family: var(--font-body); font-size: 16px; font-weight: 500; line-height: 1.4; }
+.annual-year-picker .annual-year-options button,
+.memory-preview-actions button,
+.confirm-row, .confirm-text { font-family: var(--font-body); font-size: 14px; font-weight: 500; }
+
+/* Use the artwork bounds rather than the original padded SVG canvas. */
+.glass-btn, .group-btn { gap: 3px; }
+.glass-btn svg, .group-btn svg { width: 18px; height: 18px; }
+.dressup .group-btn.draft-saved svg { fill: currentColor; stroke-width: 1.5; }
+.ai-shirt-header { position: relative; min-height: 0; padding-right: 34px; }
+.ai-shirt-header .ai-close { position: absolute; right: -10px; top: -8px; margin-right: 0; }
+.ai-progress-state { padding-top: 0; }
+.ai-progress-state > p:first-child { margin-top: 4px; }
+
+/* Blur the complete scene, including its green/cream background curve. */
+.past-memories { background: var(--secondary-cream); overflow: hidden; }
+.past-surface {
+  display: flex; flex-direction: column; height: 100%; min-height: 0;
+  background: var(--secondary-cream) url("/bg/welcome-bg.svg") center top / 100% 130% no-repeat;
+}

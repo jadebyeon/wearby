@@ -94,7 +94,7 @@ export default function CalendarScreen({ memories, onNavigate }) {
                   onClick={() => shift(-1)}
                   aria-label="Previous month"
                 >
-                  <ChevronLeft size={22} />
+                  <ChevronLeft size={16} />
                 </button>
                 <button
                   type="button"
@@ -102,7 +102,7 @@ export default function CalendarScreen({ memories, onNavigate }) {
                   onClick={() => shift(1)}
                   aria-label="Next month"
                 >
-                  <ChevronLeft size={22} />
+                  <ChevronLeft size={16} />
                 </button>
               </div>
             </div>

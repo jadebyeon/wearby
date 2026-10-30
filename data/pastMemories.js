@@ -1,3 +1,4 @@
+import { memoryMeta } from "@/lib/memories";
 // Prototype records reconstructed from the original memory images.
 // Reflections are edited demo copy, not a transcription of user records.
 import { BACKGROUNDS } from "@/data/backgrounds";
@@ -34,5 +35,5 @@ export function pastMemories(today = new Date()) {
       isSample: true,
       image: `/memories/past-${String(i + 1).padStart(2, "0")}.jpg`,
     };
-  });
+  }).filter((memory) => !memoryMeta(memory.id).deleted);
 }

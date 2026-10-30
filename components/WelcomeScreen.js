@@ -43,8 +43,8 @@ export default function WelcomeScreen({ onDress, drafts = [], onOpenDraft, memor
 
       <section className="memories">
         <div className="memories-heading">
-          <h2 className="text-h3">Recent Memories</h2>
-          <button type="button" className="text-body memories-more" onClick={onSeeMore}>See more</button>
+          <h2 className="text-h3">Past Memories</h2>
+          <button type="button" className="text-small memories-more" onClick={onSeeMore}>See more</button>
         </div>
         {recentMemories.length === 0 ? (
           <div className="memory-empty-row">
@@ -62,7 +62,7 @@ export default function WelcomeScreen({ onDress, drafts = [], onOpenDraft, memor
             </div>
           </div>
         ) : (
-          <ul className="memory-list" tabIndex={0} aria-label="Recent memories, scroll sideways">
+          <ul className="memory-list" tabIndex={0} aria-label="Past memories, scroll sideways">
             {recentMemories.map((m) => {
               const label = memoryLabel(m.savedAt);
               return (

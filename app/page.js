@@ -60,7 +60,7 @@ export default function Home() {
   };
 
   if (screen === "pastmemories") {
-    return <PastMemoriesScreen memories={memories} order={memoryOrder} onOrderChange={setMemoryOrder} onOpenMemory={openMemory} onNavigate={goTab} />;
+    return <PastMemoriesScreen onMemoriesChange={() => setMemories(loadMemories())} memories={memories} order={memoryOrder} onOrderChange={setMemoryOrder} onOpenMemory={openMemory} onNavigate={goTab} />;
   }
   if (screen === "profile") {
     return <ProfileScreen onNavigate={goTab} />;

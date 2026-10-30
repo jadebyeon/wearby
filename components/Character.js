@@ -1,8 +1,9 @@
-import { BY_ID, PLACEMENT, placementFor } from "@/data/clothes";
+import { resolveClothing } from "@/lib/custom-clothes";
+import { PLACEMENT, placementFor } from "@/data/clothes";
 
 export default function Character({ outfit }) {
   const worn = Object.entries(outfit)
-    .map(([slot, id]) => ({ slot, item: BY_ID[id] }))
+    .map(([slot, id]) => ({ slot, item: resolveClothing(id) }))
     .filter(({ slot, item }) => item && PLACEMENT[slot]);
 
   const label = worn.length
@@ -28,6 +29,7 @@ export default function Character({ outfit }) {
               ...(p.bottom != null ? { bottom: `${p.bottom}%` } : { top: `${p.top}%` }),
               width: `${p.width}%`,
               zIndex: p.z,
+              ...(p.clipPath ? { clipPath: p.clipPath } : {}),
             }}
           />
         );

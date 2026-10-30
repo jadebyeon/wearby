@@ -8,7 +8,7 @@ const nunito = Nunito({
 });
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["500"],
+  weight: ["400", "500"],
   variable: "--font-inter",
 });
 const caveat = Caveat({

@@ -28,6 +28,9 @@ const DSHOES = { bottom: 0.2, width: 60 };
 const BOOTS = { bottom: 0, width: 63 };
 const COAT = { left: 0, top: 30.7, width: 98 };
 const ITEM_PLACEMENT = {
+  // Gray's 489×447 canvas includes stray pixels outside its 446×383 garment.
+  // Match black's visible width and hem without scaling the transparent padding.
+  "skirt-gray": { width: 48 * 489 / 446, clipPath: "inset(0 8.79% 14.32% 0)" },
   "cardigan-gray": WIDE_TOP,
   "cardigan-red": WIDE_TOP,
   "cardigan-white": WIDE_TOP,

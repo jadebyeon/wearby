@@ -3,7 +3,7 @@
 import { useState } from "react";
 import NavBar from "@/components/NavBar";
 import { pastMemories } from "@/data/pastMemories";
-import { BY_ID } from "@/data/clothes";
+import { resolveClothing } from "@/lib/custom-clothes";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const COLORS = ["#a9b3a1", "#bfaebf", "#f2c49b", "#9ca9b5", "#356230", "#ddd6ca"];
@@ -28,14 +28,16 @@ export default function InsightsScreen({ memories = [], onNavigate }) {
   const months = Array(12).fill(0);
   const ratings = Array(5).fill(0);
   const wears = new Map();
+  const clothing = new Map();
   for (const memory of selected) {
     months[new Date(memory.savedAt).getMonth()] += 1;
     if (Number.isInteger(memory.rating) && memory.rating >= 1 && memory.rating <= 5) ratings[memory.rating - 1] += 1;
     for (const id of new Set(Object.values(memory.outfit || {}))) {
-      if (BY_ID[id]) wears.set(id, (wears.get(id) || 0) + 1);
+      const item = resolveClothing(id);
+      if (item) { clothing.set(item.id, item); wears.set(item.id, (wears.get(item.id) || 0) + 1); }
     }
   }
-  const ranked = [...wears].map(([id, count]) => ({ ...BY_ID[id], count })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+  const ranked = [...wears].map(([id, count]) => ({ ...clothing.get(id), count })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   const top = ranked.slice(0, 5);
   const other = ranked.slice(5).reduce((sum, item) => sum + item.count, 0);
   const slices = [...top, ...(other ? [{ id: "other", label: "Other", count: other }] : [])];
