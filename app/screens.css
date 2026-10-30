@@ -506,10 +506,11 @@
   background: none;
   border: 0;
   border-radius: inherit;
-  color: var(--neutral-navy);
+  color: var(--text-muted);
 }
 .bubble textarea::placeholder {
   color: var(--text-muted);
+  opacity: .8;
 }
 .bubble textarea:focus-visible {
   outline: none;
@@ -2071,6 +2072,8 @@ button.cal-day {
 .tab { font-family: var(--font-body); font-size: 16px; font-weight: 500; line-height: 1.4; }
 .annual-year-picker .annual-year-options button,
 .memory-preview-actions button,
+.ai-shirt-dialog .ai-shirt-field,
+.bubble textarea,
 .confirm-row, .confirm-text { font-family: var(--font-body); font-size: 14px; font-weight: 500; }
 
 /* Use the artwork bounds rather than the original padded SVG canvas. */
