@@ -6,7 +6,6 @@ import { BACKGROUNDS } from "@/data/backgrounds";
 const PAST = [
   { daysAgo: 1, rating: 4, outfit: { head: "head-cap-navy", top: "top-hoodie-gray", bottom: "bottom-sweats-gray", shoes: "shoes-dshoes-black" } },
   { daysAgo: 2, rating: 5, outfit: { head: "head-acc-headphone", top: "top-dress-white", outer: "outer-cardigan-red", socks: "socks-socks-gray", shoes: "shoes-flats-black" }, keep: "Food was great! I loved the sushi today.", leave: "Maybe not the udon though..." },
-  { daysAgo: 4, rating: 3, outfit: { head: "head-acc-headphone", top: "top-dress-white", outer: "outer-cardigan-red", socks: "socks-socks-gray", shoes: "shoes-flats-black" } },
   { daysAgo: 5, rating: 2, outfit: { face: "face-glasses-black", top: "top-sweater-navy", bottom: "bottom-jeans-blue", shoes: "shoes-sneakers-white" } },
   { daysAgo: 7, rating: 5, outfit: { top: "top-hoodie-gray", bottom: "bottom-sweats-gray", shoes: "shoes-dshoes-black" } },
   // The original also has headphones beneath the cap. Dress Up currently supports one head item.

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const COLORS = ["#f2c49b", "#a9b3a1", "#346332", "#bfaebf", "#f5f0e8", "#9ca9b5", "#0e0c2e"];
+const COLORS = ["#6F8F72", "#BCAEBC", "#695958", "#A9BFAA", "#F5F0E8"];
 const COUNT = 54;
 const SHOW_MS = 5200;
 

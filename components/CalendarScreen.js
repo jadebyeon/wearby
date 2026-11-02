@@ -22,18 +22,6 @@ const MONTHS = [
   "November",
   "December",
 ];
-// A recorded day is filled. The purple follows the outfit rating (light = 1 star, deep = 5 stars).
-const RATING_COLORS = {
-  0: "#dcd6e0",
-  1: "#f4effa",
-  2: "#e6dcf4",
-  3: "#d6c7ec",
-  4: "#c2aadf",
-  5: "#aa8bd0",
-};
-const NO_RECORD = "#ece6db";
-const CHECK_LIGHT = (r) => r >= 5; // white check only on the deepest purple
-
 const keyOf = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 const dayClass = (isToday, isSelected) =>
@@ -142,36 +130,19 @@ export default function CalendarScreen({ memories, onNavigate }) {
             const mem = byDay.get(k);
             const isToday = k === todayKey;
             const label = `${MONTHS[view.m]} ${d}${mem ? `, saved, ${mem.rating} stars` : ""}`;
-            const inner = (
-              <>
-                <span
-                  className="cal-blob"
-                  style={{
-                    background: mem
-                      ? (RATING_COLORS[mem.rating] ?? RATING_COLORS[0])
-                      : NO_RECORD,
-                  }}
-                >
-                  {mem && (
-                    <svg
-                      className={
-                        CHECK_LIGHT(mem.rating)
-                          ? "cal-check light"
-                          : "cal-check"
-                      }
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path d="M6.5 12.5l3.8 3.8L17.5 8" />
-                    </svg>
-                  )}
-                </span>
-                <span
-                  className={dayClass(isToday, mem && selected?.id === mem.id)}
-                >
-                  {d}
-                </span>
-              </>
+            const inner = mem ? (
+              <span
+                className="cal-thumb"
+                style={mem.background ? { backgroundImage: `url("${mem.background}")` } : undefined}
+              >
+                {mem.image && !mem.outfit ? (
+                  <img className="memory-photo" src={mem.image} alt="" />
+                ) : (
+                  <Character outfit={mem.outfit} />
+                )}
+              </span>
+            ) : (
+              <span className={dayClass(isToday, false)}>{d}</span>
             );
             return mem ? (
               <button
@@ -190,17 +161,6 @@ export default function CalendarScreen({ memories, onNavigate }) {
               </div>
             );
           })}
-        </div>
-
-        <div
-          className="cal-legend text-small"
-          aria-label="Color means the outfit rating"
-        >
-          <span>1</span>
-          {[1, 2, 3, 4, 5].map((n) => (
-            <i key={n} style={{ background: RATING_COLORS[n] }} />
-          ))}
-          <span>5 stars</span>
         </div>
 
         {selected && (

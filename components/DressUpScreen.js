@@ -24,6 +24,7 @@ function thumbSize(name) {
 }
 
 export default function DressUpScreen({
+  startWithAi = false,
   outfit,
   setOutfit,
   background,
@@ -37,7 +38,7 @@ export default function DressUpScreen({
 }) {
   const { surfaceRef, darkGlass } = useGlassTone(background);
   const leaveDialog = useRef(null);
-  const [makingShirt, setMakingShirt] = useState(false);
+  const [makingShirt, setMakingShirt] = useState(startWithAi);
   const [tab, setTab] = useState("top");
   const [pickingBackground, setPickingBackground] = useState(false);
   const templates = ITEMS.filter((item) => item.tab === tab);
@@ -271,7 +272,7 @@ export default function DressUpScreen({
   return (
     <main
       ref={surfaceRef}
-      className={`screen dressup${darkGlass ? " dark-glass" : ""}`}
+      className={`screen dressup${darkGlass ? " dark-glass" : ""}${background ? " has-bg" : ""}`}
       style={{
         "--k": 1 - shrink * (1 - minScale),
         ...(background ? { backgroundImage: `url("${background}")` } : null),

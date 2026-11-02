@@ -1,19 +1,23 @@
 :root {
-  /* Colors: ESTIMATED from the design system image. Replace with the real hex from Figma. */
-  --primary: #bfaebf;
+  /* Palette: cream and white about 60%, sage green about 30%, lilac and brown about 10%. Text is the warm brown. */
+  --primary: #BCAEBC;
   --secondary-cream: #f5f0e8;
-  --secondary-green: #346332;
-  --secondary-peach: #f2c49b;
-  --secondary-sage: #a9b3a1;
+  --secondary-green: #6F8F72;
+  --secondary-peach: #f2c49b; /* the star color for ratings */
+  --secondary-sage: #6F8F72;
   --neutral-charcoal: #2d2d2d;
-  --neutral-navy: #0e0c2e;
-  --neutral-bluegray: #9ca9b5;
+  --neutral-navy: #4a3e3d;
+  --neutral-bluegray: #8f8281;
   --neutral-white: #ffffff;
   --page-bg: #fbfbfd;
+  --text-light: #9a8d8b; /* the quietest text and icons: See more, dates, inactive nav */
+  --hero: #6F8F72; /* the green curve at the top of Home, Insights and Profile */
+  --on-hero: #F5F0E8; /* text on that green */
+  --accent: #6F8F72; /* the one green: active nav, key icons, links */
 
-  --font-heading: var(--font-nunito), sans-serif;
-  --font-body: var(--font-inter), sans-serif;
-  --font-hand: var(--font-caveat), cursive;
+  --font-heading: var(--font-dm-sans), sans-serif;
+  --font-body: var(--font-dm-sans), sans-serif;
+  --font-hand: var(--font-dm-sans), sans-serif;
 }
 
 * {
@@ -59,19 +63,19 @@ body {
 /* Type scale, from the design system */
 .text-title {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 64px;
   letter-spacing: -0.02em;
 }
 .text-h2 {
   font-family: var(--font-heading);
-  font-weight: 800;
+  font-weight: 600;
   font-size: 36px;
   letter-spacing: -0.02em;
 }
 .text-h3 {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 24px;
   letter-spacing: -0.02em;
 }

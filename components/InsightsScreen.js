@@ -6,7 +6,8 @@ import { pastMemories } from "@/data/pastMemories";
 import { resolveClothing } from "@/lib/custom-clothes";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const COLORS = ["#a9b3a1", "#bfaebf", "#f2c49b", "#9ca9b5", "#356230", "#ddd6ca"];
+const SLOT_NAMES = { head: "Head", face: "Face", top: "Top", bottom: "Bottom", outer: "Outer", socks: "Socks", shoes: "Shoes" };
+const COLORS = ["#6F8F72", "#BCAEBC", "#695958", "#A9BFAA", "#D9CCD9", "#DDD6CA"];
 
 export default function InsightsScreen({ memories = [], onNavigate }) {
   const [today] = useState(() => new Date());
@@ -104,9 +105,23 @@ export default function InsightsScreen({ memories = [], onNavigate }) {
             </div>
           </> : <p className="text-body">No clothes saved yet.</p>}
         </section>
-        <ol className="annual-ranking">
-          {top.map((item, i) => <li className="annual-card" key={item.id}><span className="text-h3">{i + 1}</span><div><h3 className="text-body">{item.label}</h3><p className="text-body">{item.count} {item.count === 1 ? "time" : "times"}</p></div><img src={item.src} alt="" /></li>)}
-        </ol>
+        {top.length > 0 && (
+          <section className="annual-card rank-card" aria-label="Top most worn pieces">
+            <ol className="rank-list">
+              {top.map((item, i) => (
+                <li className={i === 0 ? "rank-row first" : "rank-row"} key={item.id}>
+                  <span className="rank-num">{i + 1}</span>
+                  <span className="rank-pic"><img src={item.src} alt="" /></span>
+                  <span className="rank-text">
+                    <span className="rank-name">{item.label}</span>
+                    <span className="rank-sub">{SLOT_NAMES[String(item.id).split("-")[0]] || "Piece"}</span>
+                  </span>
+                  <span className="rank-count">{item.count} {item.count === 1 ? "time" : "times"}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
       </div>
       <NavBar active="insights" onNavigate={onNavigate} />
     </main>

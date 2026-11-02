@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import StartScreen from "@/components/StartScreen";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -19,6 +19,12 @@ function outfitMatches(a, b) {
 }
 
 export default function Home() {
+  // Try dark mode with ?theme=dark in the address. Without it the app is always light.
+  useEffect(() => {
+    const asked = new URLSearchParams(window.location.search).get("theme");
+    document.documentElement.dataset.theme = asked === "dark" ? "dark" : "light";
+    try { window.localStorage.removeItem("wearby.theme"); } catch {}
+  }, []);
   const navigationTransition = useRef(null);
   const [screen, setScreen] = useState("start");
   const [outfit, setOutfit] = useState({});
@@ -26,6 +32,7 @@ export default function Home() {
   const [memories, setMemories] = useState(loadMemories);
   const [drafts, setDrafts] = useState(loadDrafts);
   const [draftId, setDraftId] = useState(null);
+  const [openAi, setOpenAi] = useState(false);
   const [draftError, setDraftError] = useState(false);
   const [memoryOrder, setMemoryOrder] = useState("newest");
   const [viewing, setViewing] = useState(null);
@@ -50,7 +57,12 @@ export default function Home() {
       setScreen(next);
       return;
     }
-    navigationTransition.current = document.startViewTransition(() => flushSync(() => setScreen(next)));
+    // Tabs slide sideways in the order of the bar, so neighbouring backgrounds read as one wide picture.
+    const order = { welcome: 0, calendar: 1, insights: 2, profile: 3 };
+    document.documentElement.dataset.slide = (order[next] ?? 0) > (order[screen] ?? 0) ? "forward" : "back";
+    const transition = document.startViewTransition(() => flushSync(() => setScreen(next)));
+    navigationTransition.current = transition;
+    transition.finished.finally(() => { if (navigationTransition.current === transition) delete document.documentElement.dataset.slide; });
   };
   const openMemory = (m) => {
     setBackTo(screen);
@@ -88,7 +100,8 @@ export default function Home() {
           setDraftError(false);
           setScreen("dressup");
         }}
-        onDress={() => { setDraftId(null); setScreen("dressup"); }}
+        onDress={() => { setDraftId(null); setOpenAi(false); setOutfit({}); setBackground(null); setScreen("dressup"); }}
+        onCreateAi={() => { setDraftId(null); setOpenAi(true); setOutfit({}); setBackground(null); setScreen("dressup"); }}
         onSeeMore={() => setScreen("pastmemories")}
         memories={memories}
         onOpenMemory={openMemory}
@@ -139,6 +152,7 @@ export default function Home() {
   const matchesSaved = outfitMatches(outfit, savedDraft?.outfit) && background === (savedDraft?.background ?? null);
   return (
     <DressUpScreen
+      startWithAi={openAi}
       outfit={outfit}
       setOutfit={setOutfit}
       background={background}

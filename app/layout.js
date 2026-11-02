@@ -1,20 +1,10 @@
-import { Nunito, Inter, Caveat } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const nunito = Nunito({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["700", "800"],
-  variable: "--font-nunito",
-});
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-inter",
-});
-const caveat = Caveat({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-caveat",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-dm-sans",
 });
 
 export const metadata = {
@@ -32,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${inter.variable} ${caveat.variable}`}
+      className={`${dmSans.variable}`}
     >
       <body>
         <div className="app">{children}</div>
