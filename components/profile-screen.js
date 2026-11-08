@@ -52,45 +52,55 @@ export default function ProfileScreen({ onNavigate }) {
   return (
     <main className="screen profile">
       <div className="profile-scroll">
-        <header className="profile-header">
-          <div className="profile-heading-row">
-            <h1 className="text-h2 profile-title">{name}</h1>
-            <button ref={editButton} className="profile-edit" type="button" aria-label="Edit name" onClick={() => { setDraft(name); setEditing(true); }}>
-              <ProfileIcon name="person" />
+        <h1 className="pf-title">Profile</h1>
+
+        <section className="pf-hero" aria-label="You">
+          <div className="pf-avatar">
+            <img src="/character/faces/face-calm.svg" alt="" />
+            <button ref={editButton} className="pf-edit" type="button" aria-label="Edit name" onClick={() => { setDraft(name); setEditing(true); }}>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 4.992 13.224 7.008H7.992c-.528 0-.984.432-.984.984v8.016c0 .528.432.984.984.984h2.544c.312.048.624.048.936 0h4.536c.528 0 .984-.432.984-.984v-4.224l1.944-2.16.072.048v6.312c0 1.68-1.344 3.024-3 3.024H8.016c-1.68 0-3.024-1.344-3.024-3.024V7.992c0-1.656 1.344-3 3.024-3H15Zm1.272 1.632 1.344 1.488-4.896 5.568c-.216.24-.888.552-2.04.936-.024.024-.072.024-.12 0-.096-.024-.168-.144-.12-.24.312-1.128.6-1.824.816-2.064l5.016-5.688Zm.648-.768 1.368-1.536c.36-.408.984-.432 1.392-.048.408.36.432 1.008.072 1.416l-1.488 1.68-1.344-1.512Z" /></svg>
             </button>
           </div>
-          <p className="text-body profile-subtitle">A little about you</p>
-          {editing && (
-            <form className="profile-form" onSubmit={saveName}>
-              <label className="text-body" htmlFor="profile-name">Name</label>
-              <input autoFocus id="profile-name" className="text-body profile-input" autoComplete="given-name" maxLength={40} value={draft}
-                aria-invalid={error ? true : undefined} aria-describedby={error ? "profile-error" : undefined}
-                onChange={(event) => { setDraft(event.target.value); setError(""); }}
-                onKeyDown={(event) => { if (event.key === "Escape") closeEditor(); }} />
-              {error && <p id="profile-error" className="text-body profile-error" role="alert">{error}</p>}
-              <div className="profile-actions">
-                <button className="text-body profile-button" type="submit">Save</button>
-                <button className="text-body profile-button" type="button" onClick={closeEditor}>Cancel</button>
-              </div>
-            </form>
-          )}
-        </header>
+          <h2 className="pf-name">{name}</h2>
+          <p className="text-body pf-sub">A little about you</p>
+        </section>
 
-        <div className="profile-sections">
-          <button className="profile-premium" type="button" onClick={() => openFeature("Wearby Premium")} >
-            <span className="text-h3 profile-premium-title"><ProfileIcon name="crown" />Try Wearby Premium</span>
+        {editing && (
+          <form className="profile-form pf-card" onSubmit={saveName}>
+            <label className="text-body" htmlFor="profile-name">Name</label>
+            <input autoFocus id="profile-name" className="text-body profile-input" autoComplete="given-name" maxLength={40} value={draft}
+              aria-invalid={error ? true : undefined} aria-describedby={error ? "profile-error" : undefined}
+              onChange={(event) => { setDraft(event.target.value); setError(""); }}
+              onKeyDown={(event) => { if (event.key === "Escape") closeEditor(); }} />
+            {error && <p id="profile-error" className="text-body profile-error" role="alert">{error}</p>}
+            <div className="profile-actions">
+              <button className="text-body profile-button" type="submit">Save</button>
+              <button className="text-body profile-button" type="button" onClick={closeEditor}>Cancel</button>
+            </div>
+          </form>
+        )}
+
+        <section className="pf-card" aria-label="Premium">
+          <button className="pf-premium" type="button" onClick={() => openFeature("Wearby Premium")}>
+            <span className="pf-premium-title"><ProfileIcon name="crown" />Try Wearby Premium</span>
             <span className="text-body">A little more for your daily outfits.</span>
           </button>
-          <button className="text-body profile-backup" type="button" onClick={() => openFeature("Share with a friend")}>
-            <span>Share with a friend</span><ProfileIcon name="megaphone" />
-          </button>
-          <button className="text-body profile-backup" type="button" onClick={() => openFeature("Rate and review")}>
-            <span>Rate and review</span><ProfileIcon name="like" />
-          </button>
-          <button className="text-body profile-backup" type="button" onClick={() => openFeature("Contact us")}>
-            <span>Contact us</span><ProfileIcon name="chat" />
-          </button>
-        </div>
+        </section>
+
+        <section className="pf-card" aria-labelledby="pf-support">
+          <h2 id="pf-support" className="pf-card-title">Support</h2>
+          <ul className="pf-list">
+            {[["Share with a friend", "megaphone"], ["Rate and review", "like"], ["Contact us", "chat"]].map(([label, icon]) => (
+              <li key={label}>
+                <button className="pf-row" type="button" onClick={() => openFeature(label)}>
+                  <ProfileIcon name={icon} />
+                  <span>{label}</span>
+                  <svg className="pf-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
       <NavBar active="profile" onNavigate={onNavigate} />
       <dialog ref={featureDialog} className="feature-notice" aria-labelledby="feature-notice-title" aria-describedby="feature-notice-description">

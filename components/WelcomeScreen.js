@@ -13,8 +13,6 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
     ...samples.filter((memory) => !savedDays.has(new Date(memory.savedAt).toDateString())),
   ].sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
 
-  const todayKey = new Date().toDateString();
-  const todayMemory = recentMemories.find((memory) => new Date(memory.savedAt).toDateString() === todayKey && memory.outfit);
   // Past outfits fill the panel like a collage. With no records yet, empty Ears keep the shape.
   const collagePool = recentMemories.length ? recentMemories : Array.from({ length: 4 }, () => ({}));
   const collage = Array.from({ length: 36 }, (_, i) => collagePool[(i * 2 + Math.floor(i / 6)) % collagePool.length]);
@@ -50,10 +48,10 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
         </div>
         <div className="home-panel-shade" aria-hidden="true" />
         <div className="home-panel-text">
-          <h2 className="home-panel-title">{todayMemory ? "Today\u2019s outfit" : "Dress Ear today"}</h2>
-          <p className="text-body home-panel-sub">{todayMemory ? "Saved. Tap to look back." : "Haven\u2019t picked an outfit yet?"}</p>
+          <h2 className="home-panel-title">Dress Ear today</h2>
+          <p className="text-body home-panel-sub">Haven&apos;t picked an outfit yet?</p>
           <div className="home-panel-actions">
-            <button type="button" className="hero-cta" onClick={() => (todayMemory ? onOpenMemory(todayMemory) : onDress())}>{todayMemory ? "View" : "Start"}</button>
+            <button type="button" className="hero-cta" onClick={onDress}>Start</button>
             <button type="button" className="hero-round" aria-label="Create a piece with AI" onClick={() => (onCreateAi ? onCreateAi() : onDress())}>
               <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M10.5 4l1.9 5.6L18 11.5l-5.6 1.9L10.5 19l-1.9-5.6L3 11.5l5.6-1.9z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /><path d="M18.5 3l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
@@ -74,8 +72,8 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
 
       <section className="memories">
         <div className="memories-heading">
-          <h2 className="text-h3">Past Memories</h2>
-          <button type="button" className="memories-more" aria-label="See more memories" onClick={onSeeMore}>
+          <h2 className="text-h3">Records</h2>
+          <button type="button" className="memories-more" aria-label="See all records" onClick={onSeeMore}>
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
@@ -95,7 +93,7 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
             </div>
           </div>
         ) : (
-          <ul className="memory-list" tabIndex={0} aria-label="Past memories, scroll sideways">
+          <ul className="memory-list" tabIndex={0} aria-label="Records, scroll sideways">
             {recentMemories.map((m) => {
               const label = memoryLabel(m.savedAt);
               return (

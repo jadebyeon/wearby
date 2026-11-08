@@ -108,16 +108,22 @@ export default function AiShirtDialog({ outfit, onWear, onClose }) {
           </div>
         </div>
       ) : (
-        <form className="ai-state" key="input" onSubmit={generate}>
-          <p className="text-small">Add a photo or a few words.</p>
-          <button type="button" className="profile-button text-body" disabled={busy || reading} onClick={() => photoInput.current.click()}>{photo ? "Change photo" : "Add photo"}</button>
+        <form className="ai-state ai-form" key="input" onSubmit={generate}>
+          <p className="text-small ai-sub">Add a photo or describe it.</p>
+          <button type="button" className="ai-drop" disabled={busy || reading} onClick={() => photoInput.current.click()}>
+            {photo ? <img src={photo} alt="Your clothing reference" /> : (
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.6-4.2a1.6 1.6 0 0 1 2.2 0L15 16.5l2-1.8a1.6 1.6 0 0 1 2.1 0L21 16.4" /></svg>
+            )}
+            <span className="ai-drop-label">{photo ? "Change image" : "Select Image"}</span>
+          </button>
           <input ref={photoInput} type="file" hidden aria-label="Clothing photo" accept="image/jpeg,image/png,image/webp" onChange={choosePhoto} disabled={busy || reading} />
-          {photo && <div className="ai-shirt-photo"><img src={photo} alt="Your clothing reference" /><button type="button" className="profile-button text-body" disabled={busy} onClick={() => setPhoto(null)}>Remove photo</button></div>}
-          <label className="text-small ai-shirt-field" htmlFor="ai-shirt-description">Your idea</label>
-          <textarea id="ai-shirt-description" className="text-small" placeholder="A sage green hoodie" maxLength={500} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} disabled={busy} />
-          {error && <p className="text-small" role="alert">{error}</p>}
-          {reading && <p className="text-small" role="status">Opening photo…</p>}
-          <button className="profile-button text-body ai-shirt-primary" disabled={busy || reading || (!description.trim() && !photo)}>{busy ? "Generating…" : "Generate"}</button>
+          {photo && <button type="button" className="ai-drop-remove" disabled={busy} onClick={() => setPhoto(null)}>Remove image</button>}
+          <div className="ai-or" role="separator"><span>or</span></div>
+          <label className="ai-sr" htmlFor="ai-shirt-description">Describe your clothing</label>
+          <textarea id="ai-shirt-description" className="ai-input" placeholder="green hoodie" maxLength={500} rows={1} value={description} onChange={(e) => setDescription(e.target.value)} disabled={busy} />
+          {error && <p className="text-small ai-note" role="alert">{error}</p>}
+          {reading && <p className="text-small ai-note" role="status">Opening photo…</p>}
+          <button className="ai-generate" disabled={busy || reading || (!description.trim() && !photo)}>{busy ? "Generating…" : "Generate"}</button>
           <p className="text-small ai-disclosure">Your photo and text are sent to AI.</p>
         </form>
       )}

@@ -11,7 +11,7 @@ import CalendarScreen from "@/components/CalendarScreen";
 import InsightsScreen from "@/components/InsightsScreen";
 import PastMemoriesScreen from "@/components/past-memories-screen";
 import ProfileScreen from "@/components/profile-screen";
-import { loadMemories, saveMemory, loadDrafts, saveDraft, removeDraft } from "@/lib/memories";
+import { loadMemories, saveMemory, updateMemory, updateMemoryMeta, loadDrafts, saveDraft, removeDraft } from "@/lib/memories";
 import "./screens.css";
 
 function outfitMatches(a, b) {
@@ -33,6 +33,7 @@ export default function Home() {
   const [drafts, setDrafts] = useState(loadDrafts);
   const [draftId, setDraftId] = useState(null);
   const [openAi, setOpenAi] = useState(false);
+  const [editingId, setEditingId] = useState(null); // the saved memory being edited in Dress Up
   const [draftError, setDraftError] = useState(false);
   const [memoryOrder, setMemoryOrder] = useState("newest");
   const [viewing, setViewing] = useState(null);
@@ -118,6 +119,20 @@ export default function Home() {
         saveFailed={saveFailed}
         onCloseError={() => setSaveFailed(false)}
         onSave={() => {
+          if (editingId) {
+            const edited = updateMemory(editingId, { outfit, background, ...reflection });
+            if (!edited.ok) { setSaveFailed(true); return; }
+            setSaveFailed(false);
+            setJustSaved(false);
+            setMemories(edited.memories);
+            setViewing(edited.memory);
+            setEditingId(null);
+            setOutfit({});
+            setBackground(null);
+            setReflection({ rating: 0, keep: "", leave: "" });
+            setScreen("confirm");
+            return;
+          }
           const result = saveMemory({ outfit, background, ...reflection, draftId });
           if (!result.ok) {
             // Stay on this page so nothing the user wrote is lost
@@ -145,6 +160,22 @@ export default function Home() {
         memory={viewing}
         justSaved={justSaved}
         onBack={() => setScreen(backTo)}
+        canEdit={memories.some((m) => m.id === viewing.id)}
+        onEdit={() => {
+          setDraftId(null);
+          setOpenAi(false);
+          setOutfit(viewing.outfit || {});
+          setBackground(viewing.background || null);
+          setReflection({ rating: viewing.rating || 0, keep: viewing.keep || "", leave: viewing.leave || "" });
+          setEditingId(viewing.id);
+          setScreen("dressup");
+        }}
+        onDelete={() => {
+          updateMemoryMeta(viewing.id, { deleted: true });
+          setMemories(loadMemories());
+          setViewing(null);
+          setScreen(backTo);
+        }}
       />
     );
   }
@@ -163,9 +194,10 @@ export default function Home() {
         setDraftId(null);
         setDraftError(false);
         setReflection({ rating: 0, keep: "", leave: "" });
+        if (editingId) { setEditingId(null); setScreen("confirm"); return; }
         setScreen("welcome");
       }}
-      hasUnsavedChanges={!matchesSaved}
+      hasUnsavedChanges={editingId ? !(outfitMatches(outfit, viewing?.outfit) && background === (viewing?.background ?? null)) : !matchesSaved}
       draftSaved={Boolean(savedDraft) && matchesSaved}
       draftError={draftError}
       onSaveDraft={() => {

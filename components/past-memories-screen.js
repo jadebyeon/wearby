@@ -6,11 +6,23 @@ import { memoryMeta, updateMemoryMeta, memoryLabel } from "@/lib/memories";
 import Character from "@/components/Character";
 import Star from "@/components/Star";
 import NavBar from "@/components/NavBar";
+import { Trash } from "@/components/GlassIcons";
 
 function ActionIcon({ kind }) {
-  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {kind === "pin" ? <><path d="M8 3h8l-1 7 3 5H6l3-5-1-7Z" /><path d="M12 15v6" /></> : kind === "share" ? <><path d="M12 15V2m-4 4 4-4 4 4M7 10H4v12h16V10h-3" /></> : <><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" /></>}
+  if (kind === "delete") return <Trash size={18} />;
+  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kind === "pin" ? <><path d="M8 3h8l-1 7 3 5H6l3-5-1-7Z" /><path d="M12 15v6" /></> : <path d="M12 15V2m-4 4 4-4 4 4M7 10H4v12h16V10h-3" />}
   </svg>;
+}
+
+function Tile({ memory }) {
+  return (
+    <span className="past-thumb" style={memory.background ? { backgroundImage: `url("${memory.background}")` } : undefined}>
+      {memory.image && !memory.outfit ? <img src={memory.image} alt="" /> : <Character outfit={memory.outfit} />}
+      {memory.rating ? <span className="past-tile-rating"><span className="past-tile-star"><Star filled /></span>{memory.rating}</span> : null}
+      <span className="past-tile-date">{memoryLabel(memory.savedAt)}</span>
+    </span>
+  );
 }
 
 function MemoryPreview({ memory, onClose, onOpen, onUpdate }) {
@@ -36,22 +48,20 @@ function MemoryPreview({ memory, onClose, onOpen, onUpdate }) {
   return (
     <dialog ref={dialog} className="memory-preview" aria-label={`Memory preview from ${memoryLabel(memory.savedAt)}`} onCancel={onClose} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="memory-preview-content">
-        <div className="memory-preview-actions">
-          <button type="button" className="text-body" onClick={() => update({ pinned: !memoryMeta(memory.id).pinned })}>{memoryMeta(memory.id).pinned ? "Unpin Memory" : "Pin Memory"}<ActionIcon kind="pin" /></button>
-          <button type="button" className="text-body" onClick={share}>Share Memory<ActionIcon kind="share" /></button>
-          <button type="button" className="text-body memory-delete" onClick={() => confirmDelete ? update({ deleted: true }) : setConfirmDelete(true)}>{confirmDelete ? "Confirm Delete" : "Delete"}<ActionIcon kind="delete" /></button>
+        <div className="memory-preview-actions" role="menu">
+          <button type="button" role="menuitem" onClick={() => update({ pinned: !memoryMeta(memory.id).pinned })}><ActionIcon kind="pin" />{memoryMeta(memory.id).pinned ? "Unpin Memory" : "Pin Memory"}</button>
+          <hr />
+          <button type="button" role="menuitem" onClick={share}><ActionIcon kind="share" />Share Memory</button>
+          <hr />
+          <button type="button" role="menuitem" className="memory-delete" onClick={() => confirmDelete ? update({ deleted: true }) : setConfirmDelete(true)}><ActionIcon kind="delete" />{confirmDelete ? "Confirm Delete" : "Delete"}</button>
           {message && <p className="text-small" role="status">{message}</p>}
         </div>
-        <button type="button" className="past-card" onClick={onOpen} aria-label="Open memory">
-          <span className="past-card-top">
-            <span className="past-thumb" style={memory.background ? { backgroundImage: `url("${memory.background}")` } : undefined}>
-              {memory.image && !memory.outfit ? <img src={memory.image} alt="Saved outfit" /> : <Character outfit={memory.outfit} />}
-            </span>
-            <span className="past-stars" aria-label={`${memory.rating} stars`}>
-              {[1, 2, 3, 4, 5].map((n) => <span key={n}><Star filled={n <= memory.rating} /></span>)}
-            </span>
+        <button type="button" className="preview-card" onClick={onOpen} aria-label="Open memory">
+          <span className="preview-art" style={memory.background ? { backgroundImage: `url("${memory.background}")` } : undefined}>
+            {memory.image && !memory.outfit ? <img src={memory.image} alt="" /> : <Character outfit={memory.outfit} />}
           </span>
-          <span className="text-small past-date">{memoryLabel(memory.savedAt)}</span>
+          {memory.rating ? <span className="preview-stars" role="img" aria-label={`${memory.rating} out of 5 stars`}>{[1, 2, 3, 4, 5].map((n) => <span key={n} className="preview-star"><Star filled={n <= memory.rating} /></span>)}</span> : null}
+          <span className="preview-date">{memoryLabel(memory.savedAt)}</span>
         </button>
       </div>
     </dialog>
@@ -88,44 +98,44 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
       <div className="past-surface">
       <div className="past-scroll">
         <header className="past-header">
-          <h1 className="text-h2">Past Memories</h1>
-          <p className="text-body">You have recorded {records.length} memories!</p>
+          <div className="past-title-row">
+            <h1 className="past-title">Records</h1>
+            <details className="memo-sort" onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+            }} onKeyDown={(event) => {
+              if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary").focus(); }
+            }}>
+              <summary className="memo-sort-btn" aria-label="Sort memories by date">{order === "oldest" ? "Oldest" : "Newest"}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+              <div className="memo-sort-menu" role="group" aria-label="Sort order">
+                {["newest", "oldest"].map((value, i) => (
+                  <span key={value}>
+                    {i > 0 && <hr />}
+                    <button type="button" aria-pressed={order === value} onClick={(event) => {
+                      onOrderChange(value);
+                      const picker = event.currentTarget.closest("details");
+                      picker.open = false;
+                      picker.querySelector("summary").focus();
+                    }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ opacity: order === value ? 1 : 0 }}><path d="m5 12.5 4.5 4.5L19 7" /></svg>
+                      {value === "newest" ? "Newest" : "Oldest"}
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </details>
+          </div>
+          <p className="text-body past-sub">{records.length} {records.length === 1 ? "memory" : "memories"} recorded</p>
         </header>
-        <div className="past-sort">
-          <details className="annual-year-picker past-sort-picker" onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
-          }} onKeyDown={(event) => {
-            if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary").focus(); }
-          }}>
-            <summary className="cal-today" aria-label="Sort memories by date">{order === "oldest" ? "Oldest first" : "Newest first"}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
-            <div className="annual-year-options" role="group" aria-label="Sort order">
-              {["newest", "oldest"].map((value) => <button type="button" className="text-body" key={value} aria-pressed={order === value} onClick={(event) => {
-                onOrderChange(value);
-                const picker = event.currentTarget.closest("details");
-                picker.open = false;
-                picker.querySelector("summary").focus();
-              }}>{value === "newest" ? "Newest first" : "Oldest first"}</button>)}
-            </div>
-          </details>
-        </div>
         <ul className="past-grid">
           {records.map((memory) => (
             <li key={memory.id}>
-              <button type="button" className="past-card" onPointerDown={(event) => startPress(event, memory)}
+              <button type="button" className="past-tile" onPointerDown={(event) => startPress(event, memory)}
                 onPointerMove={(event) => { if (press.current && Math.hypot(event.clientX - press.current.x, event.clientY - press.current.y) > 10) cancelPress(); }}
                 onPointerUp={cancelPress} onPointerCancel={cancelPress} onPointerLeave={cancelPress}
                 onContextMenu={(event) => { event.preventDefault(); cancelPress(); suppressClick.current = true; setPreview(memory); }}
                 onKeyDown={(event) => { if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); setPreview(memory); } }}
                 onClick={(event) => { if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; } onOpenMemory(memory); }} aria-label={`Open memory from ${memoryLabel(memory.savedAt)}, ${memory.rating} stars`}>
-                <span className="past-card-top">
-                  <span className="past-thumb" style={memory.background ? { backgroundImage: `url("${memory.background}")` } : undefined}>
-                    {memory.image && !memory.outfit ? <img src={memory.image} alt="" /> : <Character outfit={memory.outfit} />}
-                  </span>
-                  <span className="past-stars" aria-hidden="true">
-                    {[1, 2, 3, 4, 5].map((n) => <span key={n}><Star filled={n <= memory.rating} /></span>)}
-                  </span>
-                </span>
-                <span className="text-small past-date">{memoryLabel(memory.savedAt)}</span>
+                <Tile memory={memory} />
               </button>
             </li>
           ))}

@@ -54,9 +54,6 @@ export default function CalendarScreen({ memories, onNavigate }) {
     ...Array.from({ length: days }, (_, i) => i + 1),
   ];
   const todayKey = keyOf(today);
-  const savedThisMonth = Array.from({ length: days }, (_, i) => i + 1).filter(
-    (d) => byDay.has(`${view.y}-${view.m}-${d}`),
-  ).length;
 
   function shift(n) {
     const d = new Date(view.y, view.m + n, 1);
@@ -94,23 +91,23 @@ export default function CalendarScreen({ memories, onNavigate }) {
                 </button>
               </div>
             </div>
-            <p className="text-body cal-sub">
-              {savedThisMonth === 0
-                ? "No outfits saved this month"
-                : `${savedThisMonth} outfit${savedThisMonth > 1 ? "s" : ""} saved this month`}
-            </p>
           </div>
-          <details className="annual-year-picker" onBlur={(event) => {
+          <details className="memo-sort" onBlur={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
           }} onKeyDown={(event) => {
             if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary").focus(); }
           }}>
-            <summary className="cal-today" aria-label={`Year, ${view.y}`}>{view.y}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
-            <div className="annual-year-options" role="group" aria-label="Choose year">
-              {[...new Set([view.y, today.getFullYear(), today.getFullYear() - 1, ...memories.map((m) => new Date(m.savedAt).getFullYear())])].sort((a, b) => b - a).map((year) => <button type="button" className="text-body" key={year} aria-pressed={view.y === year} onClick={(event) => {
-                setView((prev) => ({ ...prev, y: year })); setSelected(null);
-                const picker = event.currentTarget.closest("details"); picker.open = false; picker.querySelector("summary").focus();
-              }}>{year}</button>)}
+            <summary className="memo-sort-btn" aria-label={`Year, ${view.y}`}>{view.y}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+            <div className="memo-sort-menu" role="group" aria-label="Choose year">
+              {[...new Set([view.y, today.getFullYear(), today.getFullYear() - 1, ...memories.map((m) => new Date(m.savedAt).getFullYear())])].sort((a, b) => b - a).map((year, i) => (
+                <span key={year}>
+                  {i > 0 && <hr />}
+                  <button type="button" aria-pressed={view.y === year} onClick={(event) => {
+                    setView((prev) => ({ ...prev, y: year })); setSelected(null);
+                    const picker = event.currentTarget.closest("details"); picker.open = false; picker.querySelector("summary").focus();
+                  }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ opacity: view.y === year ? 1 : 0 }}><path d="m5 12.5 4.5 4.5L19 7" /></svg>{year}</button>
+                </span>
+              ))}
             </div>
           </details>
         </header>

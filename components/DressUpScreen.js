@@ -100,7 +100,10 @@ export default function DressUpScreen({
     let wheelChanged = false;
     function onWheel(e) {
       if (e.ctrlKey) return;
-      const horizontal = e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      // Two-finger scrolling works anywhere on this screen, but not through an open sheet or dialog.
+      if (e.target.closest?.("dialog, .action-sheet, .sheet-backdrop")) return;
+      // A trackpad drifts sideways a little. Only a clearly sideways swipe changes the category.
+      const horizontal = e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.6;
       if (horizontal) {
         // The category heading remains a native horizontally scrolling strip.
         if (tabsRef.current?.contains(e.target)) return;
@@ -185,13 +188,14 @@ export default function DressUpScreen({
     function onTouchCancel() { axis = "ignore"; }
     sheet.addEventListener("touchend", onTouchEnd);
     sheet.addEventListener("touchcancel", onTouchCancel);
-    sheet.addEventListener("wheel", onWheel, { passive: false });
+    const screen = sheet.closest(".dressup") || sheet;
+    screen.addEventListener("wheel", onWheel, { passive: false });
     sheet.addEventListener("touchstart", onTouchStart, { passive: true });
     sheet.addEventListener("touchmove", onTouchMove, { passive: false });
     return () => {
       sheet.removeEventListener("touchend", onTouchEnd);
       sheet.removeEventListener("touchcancel", onTouchCancel);
-      sheet.removeEventListener("wheel", onWheel);
+      screen.removeEventListener("wheel", onWheel);
       sheet.removeEventListener("touchstart", onTouchStart);
       sheet.removeEventListener("touchmove", onTouchMove);
     };
@@ -359,10 +363,10 @@ export default function DressUpScreen({
       <dialog ref={leaveDialog} className="leave-draft-dialog" aria-labelledby="leave-draft-title" aria-describedby="leave-draft-description">
         <img className="leave-draft-face" src="/character/faces/face-sad.svg" alt="" />
         <h2 id="leave-draft-title" className="text-body">Leave without saving?</h2>
-        <p id="leave-draft-description" className="text-body">Your changes won’t be saved.</p>
+        <p id="leave-draft-description" className="text-body">Your outfit won’t be saved.</p>
         <div className="leave-draft-actions">
           <button type="button" className="profile-button text-body" autoFocus onClick={() => leaveDialog.current.close()}>Cancel</button>
-          <button type="button" className="profile-button text-body" onClick={onBack}>Continue</button>
+          <button type="button" className="profile-button text-body" onClick={onBack}>Leave</button>
         </div>
       </dialog>
       {makingShirt && <AiShirtDialog outfit={outfit} onClose={() => setMakingShirt(false)} onWear={(item) => {
