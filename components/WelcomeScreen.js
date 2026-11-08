@@ -5,7 +5,7 @@ import NavBar from "@/components/NavBar";
 import Character from "@/components/Character";
 import { memoryLabel } from "@/lib/memories";
 
-export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpenDraft, memories = [], onOpenMemory, onNavigate, onSeeMore }) {
+export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpenDraft, memories = [], onOpenMemory, onNavigate, onSeeMore, onSeeSaved }) {
   const [samples] = useState(pastMemories);
   const savedDays = new Set(memories.map((memory) => new Date(memory.savedAt).toDateString()));
   const recentMemories = [
@@ -59,23 +59,12 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
         </div>
       </section>
 
-      {drafts.length > 0 && (
-        <section className="badge-card draft-card" aria-label="Saved drafts">
-          <p className="text-body">You have {drafts.length} {drafts.length === 1 ? "outfit" : "outfits"} saved</p>
-          <div className="draft-previews">
-            {drafts.map((draft, index) => <button type="button" key={draft.id} className="draft-preview" aria-label={`Edit saved outfit ${index + 1}`} onClick={() => onOpenDraft(draft)} style={draft.background ? { backgroundImage: `url("${draft.background}")` } : undefined}>
-              <Character outfit={draft.outfit} />
-            </button>)}
-          </div>
-        </section>
-      )}
-
       <section className="memories">
         <div className="memories-heading">
           <h2 className="text-h3">Records</h2>
-          <button type="button" className="memories-more" aria-label="See all records" onClick={onSeeMore}>
+          {recentMemories.length > 8 && <button type="button" className="memories-more" aria-label="See all records" onClick={onSeeMore}>
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </button>
+          </button>}
         </div>
         {recentMemories.length === 0 ? (
           <div className="memory-empty-row">
@@ -94,7 +83,7 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
           </div>
         ) : (
           <ul className="memory-list" tabIndex={0} aria-label="Records, scroll sideways">
-            {recentMemories.map((m) => {
+            {recentMemories.slice(0, 8).map((m) => {
               const label = memoryLabel(m.savedAt);
               return (
                 <li key={m.id}>
@@ -111,6 +100,29 @@ export default function WelcomeScreen({ onDress, onCreateAi, drafts = [], onOpen
           </ul>
         )}
       </section>
+
+      {drafts.length > 0 && (
+        <section className="memories" aria-label="Saved Memories">
+          <div className="memories-heading">
+            <h2 className="text-h3">Saved Memories</h2>
+            {drafts.length > 8 && <button type="button" className="memories-more" aria-label="See all saved memories" onClick={onSeeSaved}>
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>}
+          </div>
+          <ul className="memory-list" tabIndex={0} aria-label="Saved Memories, scroll sideways">
+            {drafts.slice(0, 8).map((draft) => (
+              <li key={draft.id}>
+                <button type="button" className="memory-open" onClick={() => onOpenDraft(draft)} aria-label={`Edit saved memory from ${memoryLabel(draft.savedAt)}`}>
+                  <span className="memory-thumb" style={draft.background ? { backgroundImage: `url("${draft.background}")`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
+                    <Character outfit={draft.outfit} />
+                    <span className="memory-date">{memoryLabel(draft.savedAt)}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <NavBar active="home" onNavigate={onNavigate} />
     </main>

@@ -68,7 +68,7 @@ function MemoryPreview({ memory, onClose, onOpen, onUpdate }) {
   );
 }
 
-export default function PastMemoriesScreen({ memories = [], order, onOrderChange, onOpenMemory, onNavigate, onMemoriesChange }) {
+export default function PastMemoriesScreen({ draftsOnly = false, memories = [], order, onOrderChange, onOpenMemory, onNavigate, onMemoriesChange }) {
   const [, refresh] = useState(0);
   const [preview, setPreview] = useState(null);
   const press = useRef(null);
@@ -79,6 +79,7 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
   }
   useEffect(() => () => clearTimeout(press.current?.timer), []);
   function startPress(event, memory) {
+    if (draftsOnly) return;
     cancelPress();
     suppressClick.current = false;
     if (!event.isPrimary || event.button !== 0) return;
@@ -89,9 +90,9 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
   }
   const [samples] = useState(pastMemories);
   const savedDays = new Set(memories.map((memory) => new Date(memory.savedAt).toDateString()));
-  const records = [...memories, ...samples.filter((memory) => !savedDays.has(new Date(memory.savedAt).toDateString()))]
-    .filter((memory) => !memoryMeta(memory.id).deleted)
-    .sort((a, b) => Number(!!memoryMeta(b.id).pinned) - Number(!!memoryMeta(a.id).pinned) || (order === "oldest" ? new Date(a.savedAt) - new Date(b.savedAt) : new Date(b.savedAt) - new Date(a.savedAt)));
+  const records = [...memories, ...(draftsOnly ? [] : samples).filter((memory) => !savedDays.has(new Date(memory.savedAt).toDateString()))]
+    .filter((memory) => draftsOnly || !memoryMeta(memory.id).deleted)
+    .sort((a, b) => (draftsOnly ? 0 : Number(!!memoryMeta(b.id).pinned) - Number(!!memoryMeta(a.id).pinned)) || (order === "oldest" ? new Date(a.savedAt) - new Date(b.savedAt) : new Date(b.savedAt) - new Date(a.savedAt)));
 
   return (
     <main className="screen past-memories">
@@ -99,7 +100,7 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
       <div className="past-scroll">
         <header className="past-header">
           <div className="past-title-row">
-            <h1 className="past-title">Records</h1>
+            <h1 className="past-title">{draftsOnly ? "Saved Memories" : "Records"}</h1>
             <details className="memo-sort" onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
             }} onKeyDown={(event) => {
@@ -124,7 +125,7 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
               </div>
             </details>
           </div>
-          <p className="text-body past-sub">{records.length} {records.length === 1 ? "memory" : "memories"} recorded</p>
+          <p className="text-body past-sub">{records.length} {records.length === 1 ? "memory" : "memories"} {draftsOnly ? "saved" : "recorded"}</p>
         </header>
         <ul className="past-grid">
           {records.map((memory) => (
@@ -132,9 +133,9 @@ export default function PastMemoriesScreen({ memories = [], order, onOrderChange
               <button type="button" className="past-tile" onPointerDown={(event) => startPress(event, memory)}
                 onPointerMove={(event) => { if (press.current && Math.hypot(event.clientX - press.current.x, event.clientY - press.current.y) > 10) cancelPress(); }}
                 onPointerUp={cancelPress} onPointerCancel={cancelPress} onPointerLeave={cancelPress}
-                onContextMenu={(event) => { event.preventDefault(); cancelPress(); suppressClick.current = true; setPreview(memory); }}
-                onKeyDown={(event) => { if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); setPreview(memory); } }}
-                onClick={(event) => { if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; } onOpenMemory(memory); }} aria-label={`Open memory from ${memoryLabel(memory.savedAt)}, ${memory.rating} stars`}>
+                onContextMenu={(event) => { if (draftsOnly) return; event.preventDefault(); cancelPress(); suppressClick.current = true; setPreview(memory); }}
+                onKeyDown={(event) => { if (draftsOnly) return; if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); setPreview(memory); } }}
+                onClick={(event) => { if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; } onOpenMemory(memory); }} aria-label={draftsOnly ? `Edit saved memory from ${memoryLabel(memory.savedAt)}` : `Open memory from ${memoryLabel(memory.savedAt)}, ${memory.rating} stars`}>
                 <Tile memory={memory} />
               </button>
             </li>

@@ -72,6 +72,18 @@ export default function Home() {
     setScreen("confirm");
   };
 
+  const openDraft = (draft) => {
+    setDraftId(draft.id);
+    setOpenAi(false);
+    setEditingId(null);
+    setOutfit(draft.outfit);
+    setBackground(draft.background);
+    setDraftError(false);
+    setScreen("dressup");
+  };
+  if (screen === "savedmemories") {
+    return <PastMemoriesScreen draftsOnly memories={drafts} order={memoryOrder} onOrderChange={setMemoryOrder} onOpenMemory={openDraft} onNavigate={goTab} />;
+  }
   if (screen === "pastmemories") {
     return <PastMemoriesScreen onMemoriesChange={() => setMemories(loadMemories())} memories={memories} order={memoryOrder} onOrderChange={setMemoryOrder} onOpenMemory={openMemory} onNavigate={goTab} />;
   }
@@ -94,13 +106,8 @@ export default function Home() {
     return (
       <WelcomeScreen
         drafts={drafts}
-        onOpenDraft={(draft) => {
-          setDraftId(draft.id);
-          setOutfit(draft.outfit);
-          setBackground(draft.background);
-          setDraftError(false);
-          setScreen("dressup");
-        }}
+        onOpenDraft={openDraft}
+        onSeeSaved={() => setScreen("savedmemories")}
         onDress={() => { setDraftId(null); setOpenAi(false); setOutfit({}); setBackground(null); setScreen("dressup"); }}
         onCreateAi={() => { setDraftId(null); setOpenAi(true); setOutfit({}); setBackground(null); setScreen("dressup"); }}
         onSeeMore={() => setScreen("pastmemories")}
