@@ -11,6 +11,7 @@ import CalendarScreen from "@/components/CalendarScreen";
 import InsightsScreen from "@/components/InsightsScreen";
 import PastMemoriesScreen from "@/components/past-memories-screen";
 import ProfileScreen from "@/components/profile-screen";
+import { trackEvent } from "@/lib/events";
 import { loadMemories, saveMemory, updateMemory, updateMemoryMeta, loadDrafts, saveDraft, removeDraft } from "@/lib/memories";
 import "./screens.css";
 
@@ -108,8 +109,8 @@ export default function Home() {
         drafts={drafts}
         onOpenDraft={openDraft}
         onSeeSaved={() => setScreen("savedmemories")}
-        onDress={() => { setDraftId(null); setOpenAi(false); setOutfit({}); setBackground(null); setScreen("dressup"); }}
-        onCreateAi={() => { setDraftId(null); setOpenAi(true); setOutfit({}); setBackground(null); setScreen("dressup"); }}
+        onDress={() => { trackEvent("dress_up_started"); setDraftId(null); setOpenAi(false); setOutfit({}); setBackground(null); setScreen("dressup"); }}
+        onCreateAi={() => { trackEvent("dress_up_started"); setDraftId(null); setOpenAi(true); setOutfit({}); setBackground(null); setScreen("dressup"); }}
         onSeeMore={() => setScreen("pastmemories")}
         memories={memories}
         onOpenMemory={openMemory}
@@ -146,6 +147,7 @@ export default function Home() {
             setSaveFailed(true);
             return;
           }
+          trackEvent("outfit_saved");
           setDrafts(loadDrafts());
           setSaveFailed(false);
           setJustSaved(true);
