@@ -42,7 +42,8 @@ const ITEM_PLACEMENT = {
   "mini-black": MINI,
   "mini-denim": MINI,
   "mini-green": MINI,
-  "mini-ivory": MINI,
+  // Ivory has 91 extra pixels above the garment on its 462px-wide canvas.
+  "mini-ivory": { ...MINI, top: MINI.top - (91 / 462) * MINI.width * (114 / 368) },
   "mini-navy": MINI,
   "mini-orange": MINI,
   "dress-black": DRESS,
