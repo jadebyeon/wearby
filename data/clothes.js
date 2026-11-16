@@ -4,7 +4,8 @@
 // Measured from Figma-style outfit screenshots. Defaults fit: tee, jeans, sneakers, caps.
 export const PLACEMENT = {
   bottom: { left: 26.4, top: 54.7, width: 48, z: 3 },
-  socks: { center: true, bottom: 1.4, width: 54, z: 1 },
+  // Align the sock outline with Ear's feet, whose center sits just right of the canvas center.
+  socks: { left: 22.25, bottom: 0.7, width: 56.5, z: 1 },
   shoes: { center: true, bottom: 0.4, width: 57, z: 2 },
   top: { left: 5.5, top: 31.1, width: 89, z: 4 },
   outer: { left: 0, top: 30, width: 100, z: 5 },
