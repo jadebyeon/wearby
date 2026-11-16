@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { logEvent } from "@/lib/events";
 import { ChevronLeft, Bookmark, Picture, Check, useGlassTone } from "@/components/GlassIcons";
 import { resolveClothing } from "@/lib/custom-clothes";
 import AiShirtDialog from "@/components/ai-shirt-dialog";
@@ -36,6 +37,13 @@ export default function DressUpScreen({
   hasUnsavedChanges,
   draftSaved,
 }) {
+  const visitLogged = useRef(false);
+  useEffect(() => {
+    if (visitLogged.current) return;
+    visitLogged.current = true;
+    logEvent("dress_up_started");
+  }, []);
+
   const { surfaceRef, darkGlass } = useGlassTone(background);
   const leaveDialog = useRef(null);
   const [makingShirt, setMakingShirt] = useState(startWithAi);

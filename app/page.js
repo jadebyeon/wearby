@@ -11,7 +11,7 @@ import CalendarScreen from "@/components/CalendarScreen";
 import InsightsScreen from "@/components/InsightsScreen";
 import PastMemoriesScreen from "@/components/past-memories-screen";
 import ProfileScreen from "@/components/profile-screen";
-import { trackEvent } from "@/lib/events";
+import { trackEvent, logEvent } from "@/lib/events";
 import { loadMemories, saveMemory, updateMemory, updateMemoryMeta, loadDrafts, saveDraft, removeDraft } from "@/lib/memories";
 import "./screens.css";
 
@@ -220,6 +220,7 @@ export default function Home() {
         }
         const result = saveDraft({ id: draftId, outfit, background });
         if (!result.ok) { setDraftError(true); return; }
+        logEvent("outfit_saved");
         setDrafts(result.drafts);
         setDraftId(result.id);
         setDraftError(false);
