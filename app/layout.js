@@ -1,4 +1,5 @@
 import { DM_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
     >
       <body>
         <div className="app">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
